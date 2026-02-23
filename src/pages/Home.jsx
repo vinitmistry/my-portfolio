@@ -58,6 +58,7 @@ const AWARDS = [
 function useReveal(threshold = 0.12) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const obs = new IntersectionObserver(
       ([entry]) => {
@@ -70,7 +71,6 @@ function useReveal(threshold = 0.12) {
     );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return [ref, visible];
 }

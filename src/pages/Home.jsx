@@ -151,8 +151,8 @@ export default function Home() {
             VM<span style={{ color: "#f472b6" }}>.</span>
           </span>
 
-          {/* Desktop Nav Links */}
-          <div style={S.desktopNav}>
+          {/* Nav Links - Hide on mobile via CSS */}
+          <div style={S.navLinks}>
             {NAV_LINKS.map((link) => {
               const isActive = activeNav === link;
               const isHov = navHov === link;
@@ -174,7 +174,6 @@ export default function Home() {
                     color: isActive ? "#c4b5fd" : isHov ? "#e2d9f3" : "#64748b",
                     transition: "color 0.3s ease",
                     letterSpacing: "0.3px",
-                    whiteSpace: "nowrap",
                   }}
                 >
                   <span
@@ -220,15 +219,12 @@ export default function Home() {
             })}
           </div>
 
-          {/* Desktop CTA Button */}
+          {/* CTA Button */}
           <a
             href="mailto:vinitmistry11@gmail.com"
             onMouseEnter={() => setNavHov("cta")}
             onMouseLeave={() => setNavHov(null)}
-            style={{
-              ...S.ctaButton,
-              display: window.innerWidth < 768 ? "none" : "inline-block",
-            }}
+            style={S.ctaButton}
           >
             Hire Me ✦
           </a>
@@ -237,14 +233,7 @@ export default function Home() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{
-              display: window.innerWidth < 768 ? "block" : "none",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "8px",
-              color: "#a78bfa",
-              fontSize: "24px",
-              transition: "transform 0.3s ease",
+              ...S.hamburger,
               transform: mobileMenuOpen ? "rotate(90deg)" : "rotate(0deg)",
             }}
           >
@@ -252,52 +241,31 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Mobile Sidebar Menu */}
+        {/* Mobile Sidebar Menu - Only visible on mobile */}
         {mobileMenuOpen && (
           <div style={S.mobileSidebar}>
-            <div style={S.mobileMenuLinks}>
-              {NAV_LINKS.map((link) => {
-                const isActive = activeNav === link;
-                return (
-                  <button
-                    key={link}
-                    onClick={() => scrollTo(link)}
-                    style={{
-                      border: "none",
-                      cursor: "pointer",
-                      padding: "16px 24px",
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: "15px",
-                      fontWeight: "500",
-                      color: isActive ? "#c4b5fd" : "#94a3b8",
-                      textAlign: "left",
-                      width: "100%",
-                      transition: "all 0.3s ease",
-                      borderLeft: isActive ? "3px solid #f472b6" : "3px solid transparent",
-                      background: isActive ? "rgba(167,139,250,0.1)" : "transparent",
-                    }}
-                  >
-                    {link}
-                  </button>
-                );
-              })}
-              <a
-                href="mailto:vinitmistry11@gmail.com"
-                style={{
-                  padding: "16px 24px",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "15px",
-                  fontWeight: "500",
-                  color: "#a78bfa",
-                  textDecoration: "none",
-                  display: "block",
-                  borderTop: "1px solid rgba(167,139,250,0.2)",
-                  marginTop: "8px",
-                }}
-              >
-                📧 Hire Me
-              </a>
-            </div>
+            {NAV_LINKS.map((link) => {
+              const isActive = activeNav === link;
+              return (
+                <button
+                  key={link}
+                  onClick={() => scrollTo(link)}
+                  style={{
+                    ...S.mobileLink,
+                    borderLeft: isActive ? "4px solid #f472b6" : "4px solid transparent",
+                    background: isActive ? "rgba(167,139,250,0.1)" : "transparent",
+                  }}
+                >
+                  {link}
+                </button>
+              );
+            })}
+            <a
+              href="mailto:vinitmistry11@gmail.com"
+              style={S.mobileEmailLink}
+            >
+              📧 Email Me
+            </a>
           </div>
         )}
       </nav>
@@ -955,6 +923,23 @@ export default function Home() {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+          nav > div:first-child {
+            flex-wrap: nowrap;
+            gap: 12px;
+          }
+          [style*="desktopNav"], [style*="navLinks"] {
+            display: none !important;
+          }
+          button[style*="hamburger"] {
+            display: block !important;
+          }
+          a[href*="mailto"][style*="ctaButton"] {
+            display: none !important;
+          }
+        }
       `}</style>
     </div>
   );
@@ -1048,9 +1033,14 @@ const S = {
     display: "flex",
     gap: "40px",
     alignItems: "center",
-    "@media (max-width: 768px)": {
-      display: "none",
-    },
+    flex: 1,
+  },
+
+  navLinks: {
+    display: "flex",
+    gap: "40px",
+    alignItems: "center",
+    flex: 1,
   },
 
   ctaButton: {
@@ -1067,12 +1057,23 @@ const S = {
     textDecoration: "none",
   },
 
+  hamburger: {
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    padding: "8px",
+    color: "#a78bfa",
+    fontSize: "24px",
+    transition: "transform 0.3s ease",
+    display: "none",
+  },
+
   mobileSidebar: {
     position: "absolute",
     top: "100%",
     left: 0,
     right: 0,
-    background: "rgba(13,13,20,0.95)",
+    background: "rgba(13,13,20,0.98)",
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
     borderBottom: "1px solid rgba(255,255,255,0.07)",
@@ -1080,10 +1081,31 @@ const S = {
     animation: "slideDown 0.3s cubic-bezier(.22,1,.36,1)",
   },
 
-  mobileMenuLinks: {
-    display: "flex",
-    flexDirection: "column",
+  mobileLink: {
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    padding: "16px 24px",
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: "15px",
+    fontWeight: "500",
+    color: "#94a3b8",
+    textAlign: "left",
     width: "100%",
+    transition: "all 0.3s ease",
+    display: "block",
+  },
+
+  mobileEmailLink: {
+    padding: "16px 24px",
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: "15px",
+    fontWeight: "500",
+    color: "#a78bfa",
+    textDecoration: "none",
+    display: "block",
+    borderTop: "1px solid rgba(167,139,250,0.2)",
+    marginTop: "8px",
   },
 
   heroSection: { 

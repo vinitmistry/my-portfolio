@@ -70,7 +70,8 @@ function useReveal(threshold = 0.12) {
     );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, [threshold]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return [ref, visible];
 }
 

@@ -100,8 +100,12 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Check if mobile on mount
+    setIsMobile(window.innerWidth < 768);
+    
     // Hero entrance — slight delay for dramatic effect
     setTimeout(() => setHeroReady(true), 200);
 
@@ -115,8 +119,18 @@ export default function Home() {
         }
       }
     };
+    
+    const onResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setMobileMenuOpen(false);
+    };
+
     window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   const scrollTo = (id) => {
@@ -151,94 +165,100 @@ export default function Home() {
             VM<span style={{ color: "#f472b6" }}>.</span>
           </span>
 
-          {/* Nav Links - Hide on mobile via CSS */}
-          <div style={S.navLinks}>
-            {NAV_LINKS.map((link) => {
-              const isActive = activeNav === link;
-              const isHov = navHov === link;
-              return (
-                <button
-                  key={link}
-                  onClick={() => scrollTo(link)}
-                  onMouseEnter={() => setNavHov(link)}
-                  onMouseLeave={() => setNavHov(null)}
-                  style={{
-                    position: "relative",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: "8px 0",
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                    color: isActive ? "#c4b5fd" : isHov ? "#e2d9f3" : "#64748b",
-                    transition: "color 0.3s ease",
-                    letterSpacing: "0.3px",
-                  }}
-                >
-                  <span
-                    style={{
-                      position: "absolute",
-                      inset: "-4px -14px",
-                      borderRadius: "8px",
-                      background: isActive
-                        ? "rgba(167,139,250,0.12)"
-                        : isHov
-                        ? "rgba(167,139,250,0.07)"
-                        : "transparent",
-                      transition: "background 0.3s ease",
-                      zIndex: 0,
-                    }}
-                  />
-                  <span style={{ position: "relative", zIndex: 1 }}>
-                    {link}
-                  </span>
-                  <span
-                    style={{
-                      position: "absolute",
-                      bottom: 0,
-                      left: "50%",
-                      transform:
-                        isActive || isHov
-                          ? "translateX(-50%) scaleX(1)"
-                          : "translateX(-50%) scaleX(0)",
-                      transformOrigin: "center",
-                      height: "2px",
-                      width: "100%",
-                      background: isActive
-                        ? "linear-gradient(90deg, #a78bfa, #f472b6)"
-                        : "rgba(167,139,250,0.45)",
-                      borderRadius: "2px",
-                      transition:
-                        "transform 0.35s cubic-bezier(.22,1,.36,1), background 0.3s",
-                      zIndex: 1,
-                    }}
-                  />
-                </button>
-              );
-            })}
-          </div>
+          {/* Nav Links - Desktop only */}
+          {!isMobile && (
+            <>
+              <div style={S.navLinks}>
+                {NAV_LINKS.map((link) => {
+                  const isActive = activeNav === link;
+                  const isHov = navHov === link;
+                  return (
+                    <button
+                      key={link}
+                      onClick={() => scrollTo(link)}
+                      onMouseEnter={() => setNavHov(link)}
+                      onMouseLeave={() => setNavHov(null)}
+                      style={{
+                        position: "relative",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "8px 0",
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        color: isActive ? "#c4b5fd" : isHov ? "#e2d9f3" : "#64748b",
+                        transition: "color 0.3s ease",
+                        letterSpacing: "0.3px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: "absolute",
+                          inset: "-4px -14px",
+                          borderRadius: "8px",
+                          background: isActive
+                            ? "rgba(167,139,250,0.12)"
+                            : isHov
+                            ? "rgba(167,139,250,0.07)"
+                            : "transparent",
+                          transition: "background 0.3s ease",
+                          zIndex: 0,
+                        }}
+                      />
+                      <span style={{ position: "relative", zIndex: 1 }}>
+                        {link}
+                      </span>
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: 0,
+                          left: "50%",
+                          transform:
+                            isActive || isHov
+                              ? "translateX(-50%) scaleX(1)"
+                              : "translateX(-50%) scaleX(0)",
+                          transformOrigin: "center",
+                          height: "2px",
+                          width: "100%",
+                          background: isActive
+                            ? "linear-gradient(90deg, #a78bfa, #f472b6)"
+                            : "rgba(167,139,250,0.45)",
+                          borderRadius: "2px",
+                          transition:
+                            "transform 0.35s cubic-bezier(.22,1,.36,1), background 0.3s",
+                          zIndex: 1,
+                        }}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
 
-          {/* CTA Button */}
-          <a
-            href="mailto:vinitmistry11@gmail.com"
-            onMouseEnter={() => setNavHov("cta")}
-            onMouseLeave={() => setNavHov(null)}
-            style={S.ctaButton}
-          >
-            Hire Me ✦
-          </a>
+              {/* CTA Button - Desktop only */}
+              <a
+                href="mailto:vinitmistry11@gmail.com"
+                onMouseEnter={() => setNavHov("cta")}
+                onMouseLeave={() => setNavHov(null)}
+                style={S.ctaButton}
+              >
+                Hire Me ✦
+              </a>
+            </>
+          )}
 
-          {/* Hamburger Menu for Mobile */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{
-              ...S.hamburger,
-              transform: mobileMenuOpen ? "rotate(90deg)" : "rotate(0deg)",
-            }}
-          >
-            ☰
-          </button>
+          {/* Hamburger Menu for Mobile - Mobile only */}
+          {isMobile && (
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{
+                ...S.hamburger,
+                transform: mobileMenuOpen ? "rotate(90deg)" : "rotate(0deg)",
+              }}
+            >
+              ☰
+            </button>
+          )}
         </div>
 
         {/* Mobile Sidebar Menu - Only visible on mobile */}

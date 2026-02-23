@@ -99,6 +99,7 @@ export default function Home() {
   const [activeNav, setActiveNav] = useState("About");
   const [scrolled, setScrolled] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Hero entrance — slight delay for dramatic effect
@@ -118,10 +119,12 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollTo = (id) =>
+  const scrollTo = (id) => {
     document
       .getElementById(id.toLowerCase())
       ?.scrollIntoView({ behavior: "smooth" });
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div style={S.root}>
@@ -148,19 +151,8 @@ export default function Home() {
             VM<span style={{ color: "#f472b6" }}>.</span>
           </span>
 
-          {/* ── NAV LINKS — gap controls spacing between menu items ── */}
-          <div
-            style={{
-              display: "flex",
-              gap: "clamp(16px, 3vw, 40px)",
-              alignItems: "center",
-              flexWrap: "wrap",
-              order: 3,
-              width: "100%",
-              justifyContent: "center",
-              minWidth: "100%",
-            }}
-          >
+          {/* Desktop Nav Links */}
+          <div style={S.desktopNav}>
             {NAV_LINKS.map((link) => {
               const isActive = activeNav === link;
               const isHov = navHov === link;
@@ -177,7 +169,7 @@ export default function Home() {
                     cursor: "pointer",
                     padding: "8px 0",
                     fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontSize: "14px",
                     fontWeight: "500",
                     color: isActive ? "#c4b5fd" : isHov ? "#e2d9f3" : "#64748b",
                     transition: "color 0.3s ease",
@@ -185,7 +177,6 @@ export default function Home() {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {/* hover background pill */}
                   <span
                     style={{
                       position: "absolute",
@@ -200,13 +191,9 @@ export default function Home() {
                       zIndex: 0,
                     }}
                   />
-
-                  {/* label */}
                   <span style={{ position: "relative", zIndex: 1 }}>
                     {link}
                   </span>
-
-                  {/* animated underline */}
                   <span
                     style={{
                       position: "absolute",
@@ -233,34 +220,86 @@ export default function Home() {
             })}
           </div>
 
+          {/* Desktop CTA Button */}
           <a
             href="mailto:vinitmistry11@gmail.com"
             onMouseEnter={() => setNavHov("cta")}
             onMouseLeave={() => setNavHov(null)}
             style={{
-              padding: "8px 16px",
-              borderRadius: "8px",
-              border: "1px solid",
-              borderColor:
-                navHov === "cta"
-                  ? "rgba(167,139,250,0.7)"
-                  : "rgba(167,139,250,0.3)",
-              color: navHov === "cta" ? "#c4b5fd" : "#a78bfa",
-              fontSize: "clamp(11px, 2vw, 13px)",
-              fontWeight: "500",
-              background:
-                navHov === "cta" ? "rgba(167,139,250,0.1)" : "transparent",
-              boxShadow:
-                navHov === "cta" ? "0 0 24px rgba(167,139,250,0.2)" : "none",
-              transition: "all 0.3s ease",
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-              order: 4,
+              ...S.ctaButton,
+              display: window.innerWidth < 768 ? "none" : "inline-block",
             }}
           >
             Hire Me ✦
           </a>
+
+          {/* Hamburger Menu for Mobile */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              display: window.innerWidth < 768 ? "block" : "none",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "8px",
+              color: "#a78bfa",
+              fontSize: "24px",
+              transition: "transform 0.3s ease",
+              transform: mobileMenuOpen ? "rotate(90deg)" : "rotate(0deg)",
+            }}
+          >
+            ☰
+          </button>
         </div>
+
+        {/* Mobile Sidebar Menu */}
+        {mobileMenuOpen && (
+          <div style={S.mobileSidebar}>
+            <div style={S.mobileMenuLinks}>
+              {NAV_LINKS.map((link) => {
+                const isActive = activeNav === link;
+                return (
+                  <button
+                    key={link}
+                    onClick={() => scrollTo(link)}
+                    style={{
+                      border: "none",
+                      cursor: "pointer",
+                      padding: "16px 24px",
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "15px",
+                      fontWeight: "500",
+                      color: isActive ? "#c4b5fd" : "#94a3b8",
+                      textAlign: "left",
+                      width: "100%",
+                      transition: "all 0.3s ease",
+                      borderLeft: isActive ? "3px solid #f472b6" : "3px solid transparent",
+                      background: isActive ? "rgba(167,139,250,0.1)" : "transparent",
+                    }}
+                  >
+                    {link}
+                  </button>
+                );
+              })}
+              <a
+                href="mailto:vinitmistry11@gmail.com"
+                style={{
+                  padding: "16px 24px",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "15px",
+                  fontWeight: "500",
+                  color: "#a78bfa",
+                  textDecoration: "none",
+                  display: "block",
+                  borderTop: "1px solid rgba(167,139,250,0.2)",
+                  marginTop: "8px",
+                }}
+              >
+                📧 Hire Me
+              </a>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ══ PAGE WRAPPER ══ */}
@@ -912,6 +951,10 @@ export default function Home() {
         @keyframes blink {
           0%,100% { opacity: 1; } 50% { opacity: 0.3; }
         }
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
     </div>
   );
@@ -999,6 +1042,48 @@ const S = {
     WebkitTextFillColor: "transparent",
     cursor: "pointer",
     whiteSpace: "nowrap",
+  },
+
+  desktopNav: {
+    display: "flex",
+    gap: "40px",
+    alignItems: "center",
+    "@media (max-width: 768px)": {
+      display: "none",
+    },
+  },
+
+  ctaButton: {
+    padding: "10px 26px",
+    borderRadius: "8px",
+    border: "1px solid rgba(167,139,250,0.3)",
+    color: "#a78bfa",
+    fontSize: "13px",
+    fontWeight: "500",
+    background: "transparent",
+    boxShadow: "none",
+    transition: "all 0.3s ease",
+    cursor: "pointer",
+    textDecoration: "none",
+  },
+
+  mobileSidebar: {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    right: 0,
+    background: "rgba(13,13,20,0.95)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    borderBottom: "1px solid rgba(255,255,255,0.07)",
+    zIndex: 99,
+    animation: "slideDown 0.3s cubic-bezier(.22,1,.36,1)",
+  },
+
+  mobileMenuLinks: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
   },
 
   heroSection: { 

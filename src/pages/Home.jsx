@@ -152,8 +152,13 @@ export default function Home() {
           <div
             style={{
               display: "flex",
-              gap: "40px" /* ← change this number to adjust spacing */,
+              gap: "clamp(16px, 3vw, 40px)",
               alignItems: "center",
+              flexWrap: "wrap",
+              order: 3,
+              width: "100%",
+              justifyContent: "center",
+              minWidth: "100%",
             }}
           >
             {NAV_LINKS.map((link) => {
@@ -172,11 +177,12 @@ export default function Home() {
                     cursor: "pointer",
                     padding: "8px 0",
                     fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "14px",
+                    fontSize: "clamp(12px, 2vw, 14px)",
                     fontWeight: "500",
                     color: isActive ? "#c4b5fd" : isHov ? "#e2d9f3" : "#64748b",
                     transition: "color 0.3s ease",
                     letterSpacing: "0.3px",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {/* hover background pill */}
@@ -232,7 +238,7 @@ export default function Home() {
             onMouseEnter={() => setNavHov("cta")}
             onMouseLeave={() => setNavHov(null)}
             style={{
-              padding: "10px 26px",
+              padding: "8px 16px",
               borderRadius: "8px",
               border: "1px solid",
               borderColor:
@@ -240,7 +246,7 @@ export default function Home() {
                   ? "rgba(167,139,250,0.7)"
                   : "rgba(167,139,250,0.3)",
               color: navHov === "cta" ? "#c4b5fd" : "#a78bfa",
-              fontSize: "13px",
+              fontSize: "clamp(11px, 2vw, 13px)",
               fontWeight: "500",
               background:
                 navHov === "cta" ? "rgba(167,139,250,0.1)" : "transparent",
@@ -248,6 +254,8 @@ export default function Home() {
                 navHov === "cta" ? "0 0 24px rgba(167,139,250,0.2)" : "none",
               transition: "all 0.3s ease",
               cursor: "pointer",
+              whiteSpace: "nowrap",
+              order: 4,
             }}
           >
             Hire Me ✦
@@ -975,19 +983,22 @@ const S = {
   navInner: {
     maxWidth: "1400px",
     margin: "0 auto",
-    padding: "16px 48px",
+    padding: "16px 24px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    gap: "16px",
+    flexWrap: "wrap",
   },
   logo: {
     fontFamily: "'Fraunces', serif",
-    fontSize: "26px",
+    fontSize: "clamp(20px, 5vw, 26px)",
     fontWeight: "700",
     background: "linear-gradient(135deg, #a78bfa, #f472b6)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
     cursor: "pointer",
+    whiteSpace: "nowrap",
   },
 
   heroSection: { 
